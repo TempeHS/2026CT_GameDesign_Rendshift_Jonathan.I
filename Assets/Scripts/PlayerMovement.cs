@@ -19,8 +19,8 @@ public class PlayerMovement : MonoBehaviour
     private int lastMoveDir = 0;
 
     [Header("Jumping")]
-    private int jumpCount = 0;
-    private int maxJumps = 2;
+    public int jumpCount = 0;     // ⭐ made public
+    public int maxJumps = 2;      // ⭐ made public
 
     [Header("Wall Slide")]
     public Transform wallCheck;
@@ -37,10 +37,10 @@ public class PlayerMovement : MonoBehaviour
     public float dashPower = 24f;
     public float dashTime = 0.2f;
     public float dashCooldown = 1f;
-    private bool canDash = true;
-    private bool isDashing;
+    public bool canDash = true;   // ⭐ made public
+    public bool isDashing;        // ⭐ made public
 
-    private Coroutine dashRoutine;   // ⭐ ADDED
+    private Coroutine dashRoutine;
 
     [Header("References")]
     public Rigidbody2D rb;
@@ -94,7 +94,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
-            dashRoutine = StartCoroutine(Dash());   // ⭐ CHANGED
+            dashRoutine = StartCoroutine(Dash());
         }
 
         Flip();
@@ -294,7 +294,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // ⭐ FINAL FREEZE — stops EVERYTHING instantly
     public void FreezePlayer()
     {
         if (dashRoutine != null)
