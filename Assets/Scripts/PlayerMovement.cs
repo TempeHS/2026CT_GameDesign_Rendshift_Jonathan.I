@@ -10,17 +10,19 @@ public class PlayerMovement : MonoBehaviour
     private bool isFacingRight = true;
 
     [Header("Momentum System")]
-    public float groundMaxMomentum = 2.46f;
-    public float airMaxMomentum = 2.51f;
-    public float accelerationRate = 5.12f;
+    public float groundMaxMomentum = 2.73f;
+    public float airMaxMomentum = 2.82f;
+    public float accelerationRate = 0.23f;
     public float decayRate = 10f;
+
     private float momentum = 1f;
     private float holdTime = 0f;
     private int lastMoveDir = 0;
 
     [Header("Jumping")]
-    public int jumpCount = 0;     // ⭐ made public
-    public int maxJumps = 2;      // ⭐ made public
+    public int jumpCount = 0;
+    public int maxJumps = 2;
+    public bool inNoJumpZone = false;
 
     [Header("Wall Slide")]
     public Transform wallCheck;
@@ -37,8 +39,8 @@ public class PlayerMovement : MonoBehaviour
     public float dashPower = 24f;
     public float dashTime = 0.2f;
     public float dashCooldown = 1f;
-    public bool canDash = true;   // ⭐ made public
-    public bool isDashing;        // ⭐ made public
+    public bool canDash = true;
+    public bool isDashing;
 
     private Coroutine dashRoutine;
 
@@ -61,15 +63,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (isDashing)
-            return;
-
+        // ⭐ Restart ALWAYS works, even if frozen
         if (Input.GetKeyDown(KeyCode.Return))
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(
                 UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
             );
+            return;
         }
+
+        if (isDashing)
+            return;
 
         horizontal = Input.GetAxisRaw("Horizontal");
 
@@ -77,10 +81,13 @@ public class PlayerMovement : MonoBehaviour
         HandleWallSlide();
         HandleWallJump();
 
-        if (Input.GetButtonDown("Jump") && !isWallSliding && jumpCount < maxJumps)
+        Debug.Log("Momentum: " + momentum.ToString("F2") +
+                  " | Velocity: (" + rb.linearVelocity.x.ToString("F2") +
+                  ", " + rb.linearVelocity.y.ToString("F2") + ")");
+
+        if (!inNoJumpZone && Input.GetButtonDown("Jump") && !isWallSliding && jumpCount < maxJumps)
         {
             momentum *= 0.9f;
-
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
             jumpParticles.Stop();
             jumpParticles.Play();
@@ -88,14 +95,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         if (IsGrounded() && rb.linearVelocity.y <= 0.01f)
-        {
             jumpCount = 0;
-        }
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
-        {
             dashRoutine = StartCoroutine(Dash());
-        }
 
         Flip();
     }
@@ -108,7 +111,6 @@ public class PlayerMovement : MonoBehaviour
         if (!isWallJumping)
         {
             float speed = baseSpeed;
-
             if (!IsGrounded())
                 speed *= 1.04f;
 
@@ -119,8 +121,15 @@ public class PlayerMovement : MonoBehaviour
     private void HandleMomentum()
     {
         int moveDir = horizontal > 0 ? 1 : horizontal < 0 ? -1 : 0;
-
         float maxMomentum = IsGrounded() ? groundMaxMomentum : airMaxMomentum;
+
+        if (lastMoveDir != 0 && moveDir != lastMoveDir)
+        {
+            momentum *= Mathf.Exp(-decayRate * Time.deltaTime);
+            holdTime = 0;
+            lastMoveDir = moveDir;
+            return;
+        }
 
         if (moveDir == 0)
         {
@@ -130,17 +139,9 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (lastMoveDir != 0 && moveDir != lastMoveDir)
-        {
-            momentum *= Mathf.Exp(-decayRate * Time.deltaTime);
-            holdTime = 0;
-        }
-        else
-        {
-            holdTime += Time.deltaTime;
-            float target = maxMomentum * (1f - Mathf.Exp(-accelerationRate * holdTime));
-            momentum = Mathf.Lerp(momentum, target, 0.5f);
-        }
+        holdTime += Time.deltaTime;
+        float target = maxMomentum * (1f - Mathf.Exp(-accelerationRate * holdTime));
+        momentum = Mathf.Lerp(momentum, target, 0.5f);
 
         lastMoveDir = moveDir;
         momentum = Mathf.Clamp(momentum, 1f, maxMomentum);
@@ -155,9 +156,7 @@ public class PlayerMovement : MonoBehaviour
                 Mathf.Clamp(rb.linearVelocity.y, -wallSlideSpeed, float.MaxValue));
         }
         else
-        {
             isWallSliding = false;
-        }
     }
 
     private void HandleWallJump()
@@ -165,11 +164,9 @@ public class PlayerMovement : MonoBehaviour
         if (isWallSliding && Input.GetButtonDown("Jump"))
         {
             isWallJumping = true;
-
             momentum *= 0.9f;
 
             float direction = isFacingRight ? -1 : 1;
-
             rb.linearVelocity = new Vector2(direction * wallJumpForce.x, wallJumpForce.y);
 
             jumpParticles.Stop();
@@ -198,7 +195,6 @@ public class PlayerMovement : MonoBehaviour
         float y = Input.GetAxisRaw("Vertical");
 
         Vector2 dashDir = new Vector2(x, y);
-
         if (dashDir == Vector2.zero)
             dashDir = new Vector2(isFacingRight ? 1 : -1, 0);
 
@@ -214,20 +210,16 @@ public class PlayerMovement : MonoBehaviour
         tr.emitting = true;
 
         float t = 0f;
-
         while (t < dashTime)
         {
             t += Time.deltaTime;
-
             float ease = Mathf.Lerp(1.35f, 0.65f, t / dashTime);
-
             rb.linearVelocity = dashDir * dashStrength * ease;
 
             if (Input.GetButtonDown("Jump"))
             {
                 isDashing = false;
                 rb.gravityScale = originalGravity;
-
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
                 jumpParticles.Stop();
                 jumpParticles.Play();
@@ -262,15 +254,13 @@ public class PlayerMovement : MonoBehaviour
                 momentum *= 1.1f;
         }
         else
-        {
             momentum *= Mathf.Exp(-12f * Time.deltaTime);
-        }
 
         float maxMomentum = IsGrounded() ? groundMaxMomentum : airMaxMomentum;
         momentum = Mathf.Clamp(momentum, 1f, maxMomentum);
     }
 
-    private bool IsGrounded()
+    public bool IsGrounded()
     {
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }

@@ -4,40 +4,21 @@ public class NoDashZone : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            PlayerMovement pm = other.GetComponent<PlayerMovement>();
+        PlayerMovement pm = other.GetComponentInParent<PlayerMovement>();
+        if (pm == null)
+            return;
 
-            if (pm != null)
-            {
-                // Stop dash instantly
-                if (pm.isDashing)
-                {
-                    pm.StopAllCoroutines();
-                    pm.isDashing = false;
-                    pm.rb.gravityScale = 1f;
-                    pm.tr.emitting = false;
-                    pm.rb.linearVelocity = Vector2.zero;
-                }
-
-                // Disable dash + jump
-                pm.canDash = false;
-                pm.jumpCount = pm.maxJumps;
-            }
-        }
+        pm.canDash = false;
+        pm.inNoJumpZone = true;
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            PlayerMovement pm = other.GetComponent<PlayerMovement>();
+        PlayerMovement pm = other.GetComponentInParent<PlayerMovement>();
+        if (pm == null)
+            return;
 
-            if (pm != null)
-            {
-                pm.canDash = true;
-                pm.jumpCount = 0;
-            }
-        }
+        pm.canDash = true;
+        pm.inNoJumpZone = false;
     }
 }
