@@ -10,10 +10,8 @@ public class PlayerMovement : MonoBehaviour
     private bool isFacingRight = true;
 
     [Header("Momentum System")]
-    public float groundMaxMomentum = 2.73f;
-    public float airMaxMomentum = 2.82f;
-    public float accelerationRate = 0.23f;
-    public float decayRate = 10f;
+    public float groundMaxMomentum = 3.21f;   // UPDATED
+    public float airMaxMomentum = 3.02f;      // UPDATED
 
     private float momentum = 1f;
     private float holdTime = 0f;
@@ -63,7 +61,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        // ⭐ Restart ALWAYS works, even if frozen
         if (Input.GetKeyDown(KeyCode.Return))
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(
@@ -81,10 +78,6 @@ public class PlayerMovement : MonoBehaviour
         HandleWallSlide();
         HandleWallJump();
 
-        Debug.Log("Momentum: " + momentum.ToString("F2") +
-                  " | Velocity: (" + rb.linearVelocity.x.ToString("F2") +
-                  ", " + rb.linearVelocity.y.ToString("F2") + ")");
-
         if (!inNoJumpZone && Input.GetButtonDown("Jump") && !isWallSliding && jumpCount < maxJumps)
         {
             momentum *= 0.9f;
@@ -97,7 +90,7 @@ public class PlayerMovement : MonoBehaviour
         if (IsGrounded() && rb.linearVelocity.y <= 0.01f)
             jumpCount = 0;
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        if (!inNoJumpZone && Input.GetKeyDown(KeyCode.LeftShift) && canDash)
             dashRoutine = StartCoroutine(Dash());
 
         Flip();
@@ -125,7 +118,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (lastMoveDir != 0 && moveDir != lastMoveDir)
         {
-            momentum *= Mathf.Exp(-decayRate * Time.deltaTime);
+            momentum *= Mathf.Exp(-10f * Time.deltaTime);
             holdTime = 0;
             lastMoveDir = moveDir;
             return;
@@ -133,18 +126,23 @@ public class PlayerMovement : MonoBehaviour
 
         if (moveDir == 0)
         {
-            momentum *= Mathf.Exp(-decayRate * Time.deltaTime);
+            momentum *= Mathf.Exp(-10f * Time.deltaTime);
             holdTime = 0;
             lastMoveDir = 0;
             return;
         }
 
         holdTime += Time.deltaTime;
-        float target = maxMomentum * (1f - Mathf.Exp(-accelerationRate * holdTime));
+
+        // ⭐ NEW CURVE: faster acceleration + strong high momentum feel
+        float t = holdTime;
+        float curve = Mathf.Pow(1f - Mathf.Exp(-1.25f * t), 0.75f);
+        float target = 1f + (maxMomentum - 1f) * curve;
+
         momentum = Mathf.Lerp(momentum, target, 0.5f);
+        momentum = Mathf.Clamp(momentum, 1f, maxMomentum);
 
         lastMoveDir = moveDir;
-        momentum = Mathf.Clamp(momentum, 1f, maxMomentum);
     }
 
     private void HandleWallSlide()
@@ -183,6 +181,9 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator Dash()
     {
+        if (inNoJumpZone)
+            yield break;
+
         canDash = false;
         isDashing = true;
 
