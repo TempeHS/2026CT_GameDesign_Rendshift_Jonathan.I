@@ -5137,10 +5137,9 @@ MonoBehaviour:
   jumpingPower: 16
   groundMaxMomentum: 2.46
   airMaxMomentum: 2.51
-  accelerationRate: 5.12
-  decayRate: 10
   jumpCount: 0
   maxJumps: 2
+  inNoJumpZone: 0
   wallCheck: {fileID: 2733986830902456803}
   wallLayer:
     serializedVersion: 2

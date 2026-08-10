@@ -10,8 +10,8 @@ public class PlayerMovement : MonoBehaviour
     private bool isFacingRight = true;
 
     [Header("Momentum System")]
-    public float groundMaxMomentum = 3.21f;   // UPDATED
-    public float airMaxMomentum = 3.02f;      // UPDATED
+    public float groundMaxMomentum = 3.21f;
+    public float airMaxMomentum = 3.02f;
 
     private float momentum = 1f;
     private float holdTime = 0f;
@@ -134,7 +134,6 @@ public class PlayerMovement : MonoBehaviour
 
         holdTime += Time.deltaTime;
 
-        // ⭐ NEW CURVE: faster acceleration + strong high momentum feel
         float t = holdTime;
         float curve = Mathf.Pow(1f - Mathf.Exp(-1.25f * t), 0.75f);
         float target = 1f + (maxMomentum - 1f) * curve;
@@ -285,6 +284,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    // ⭐ FREEZE PLAYER FOR FREECAM MODE
     public void FreezePlayer()
     {
         if (dashRoutine != null)
@@ -305,5 +305,13 @@ public class PlayerMovement : MonoBehaviour
 
         if (tr != null)
             tr.emitting = false;
+    }
+
+    // ⭐ UNFREEZE PLAYER WHEN RETURNING TO NORMAL MODE
+    public void UnfreezePlayer()
+    {
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        rb.gravityScale = 3f; // your normal gravity
+        enabled = true;
     }
 }
