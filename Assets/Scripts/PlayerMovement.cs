@@ -1,5 +1,5 @@
-using System.Collections;
 using UnityEngine;
+using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -54,6 +54,9 @@ public class PlayerMovement : MonoBehaviour
     public Sprite greenSprite;
     public Sprite redSprite;
 
+    // Movement lock for FreeCam
+    public bool movementLocked = false;
+
     private void Start()
     {
         playerSprite.sprite = greenSprite;
@@ -61,6 +64,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (movementLocked)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
         if (Input.GetKeyDown(KeyCode.Return))
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(
@@ -98,6 +107,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (movementLocked)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
         if (isDashing)
             return;
 
@@ -284,9 +299,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // ⭐ FREEZE PLAYER FOR FREECAM MODE
+    // FREEZE + UNFREEZE
     public void FreezePlayer()
     {
+        movementLocked = true;
+
         if (dashRoutine != null)
         {
             StopCoroutine(dashRoutine);
@@ -298,20 +315,17 @@ public class PlayerMovement : MonoBehaviour
 
         rb.linearVelocity = Vector2.zero;
         rb.gravityScale = 0f;
-
         rb.constraints = RigidbodyConstraints2D.FreezeAll;
-
-        enabled = false;
 
         if (tr != null)
             tr.emitting = false;
     }
 
-    // ⭐ UNFREEZE PLAYER WHEN RETURNING TO NORMAL MODE
     public void UnfreezePlayer()
     {
+        movementLocked = false;
+
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-        rb.gravityScale = 3f; // your normal gravity
-        enabled = true;
+        rb.gravityScale = 3f;
     }
 }

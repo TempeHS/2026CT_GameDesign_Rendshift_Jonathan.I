@@ -2085,6 +2085,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerText: {fileID: 495163954}
+  camSwitcher: {fileID: 1735089566}
+  hasStarted: 0
+  blockStartInput: 0
 --- !u!114 &495163954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5290,7 +5293,7 @@ Camera:
   m_GameObject: {fileID: 1643275075}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -5412,7 +5415,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 10
-  lookSpeed: 2
+  zoomSpeed: 5
+  minZoom: 2
+  maxZoom: 20
 --- !u!4 &1678895299 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6194509155510063575, guid: 7d5b111714de8c047a56af8a98fff7e8, type: 3}
@@ -5516,8 +5521,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCam: {fileID: 519420031}
   freeCam: {fileID: 1643275076}
-  freeCamController: {fileID: 0}
-  playerMovement: {fileID: 0}
+  freeCamController: {fileID: 1643275080}
+  gameCanvas: {fileID: 1841837353}
+  timer: {fileID: 495163953}
+  playerMovement: {fileID: 5614719759955512006, guid: 88a7e1dce793ecc4086a4673103fcbde, type: 3}
+  freeMode: 0
 --- !u!1001 &1773050635
 PrefabInstance:
   m_ObjectHideFlags: 0
