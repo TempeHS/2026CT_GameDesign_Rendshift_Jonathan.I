@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Base Movement")]
@@ -44,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("References")]
     public Rigidbody2D rb;
-    public Transform groundCheck;
+    public Transform groundCheckRef;
     public LayerMask groundLayer;
     public TrailRenderer tr;
     public ParticleSystem jumpParticles;
@@ -54,32 +55,45 @@ public class PlayerMovement : MonoBehaviour
     public Sprite greenSprite;
     public Sprite redSprite;
 
-    // Movement lock for FreeCam
+    [HideInInspector]
     public bool movementLocked = false;
+
+    void Reset()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
 
     private void Start()
     {
-        playerSprite.sprite = greenSprite;
+        if (rb == null) rb = GetComponent<Rigidbody2D>();
+        if (rb == null) Debug.LogError("PlayerMovement: Rigidbody2D missing.");
+
+        if (playerSprite != null && greenSprite != null) playerSprite.sprite = greenSprite;
     }
 
     private void Update()
     {
+        // Keep Update running even when frozen so camera switching and UI still respond.
         if (movementLocked)
         {
             rb.linearVelocity = Vector2.zero;
-            return;
+
+            // Prevent jump buffering while frozen
+            if (Input.GetButtonDown("Jump"))
+                Input.ResetInputAxes();
         }
 
+        // Restart / respawn handling
         if (Input.GetKeyDown(KeyCode.Return))
         {
+            UnfreezePlayer();
             UnityEngine.SceneManagement.SceneManager.LoadScene(
                 UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
             );
             return;
         }
 
-        if (isDashing)
-            return;
+        if (isDashing) return;
 
         horizontal = Input.GetAxisRaw("Horizontal");
 
@@ -87,19 +101,17 @@ public class PlayerMovement : MonoBehaviour
         HandleWallSlide();
         HandleWallJump();
 
-        if (!inNoJumpZone && Input.GetButtonDown("Jump") && !isWallSliding && jumpCount < maxJumps)
+        if (!inNoJumpZone && !movementLocked && Input.GetButtonDown("Jump") && !isWallSliding && jumpCount < maxJumps)
         {
             momentum *= 0.9f;
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
-            jumpParticles.Stop();
-            jumpParticles.Play();
+            if (jumpParticles != null) { jumpParticles.Stop(); jumpParticles.Play(); }
             jumpCount++;
         }
 
-        if (IsGrounded() && rb.linearVelocity.y <= 0.01f)
-            jumpCount = 0;
+        if (IsGrounded() && rb.linearVelocity.y <= 0.01f) jumpCount = 0;
 
-        if (!inNoJumpZone && Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        if (!inNoJumpZone && !movementLocked && Input.GetKeyDown(KeyCode.LeftShift) && canDash)
             dashRoutine = StartCoroutine(Dash());
 
         Flip();
@@ -107,20 +119,19 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // Freeze physics movement when locked (Update still runs)
         if (movementLocked)
         {
             rb.linearVelocity = Vector2.zero;
             return;
         }
 
-        if (isDashing)
-            return;
+        if (isDashing) return;
 
         if (!isWallJumping)
         {
             float speed = baseSpeed;
-            if (!IsGrounded())
-                speed *= 1.04f;
+            if (!IsGrounded()) speed *= 1.04f;
 
             rb.linearVelocity = new Vector2(horizontal * speed * momentum, rb.linearVelocity.y);
         }
@@ -164,11 +175,9 @@ public class PlayerMovement : MonoBehaviour
         if (IsWalled() && !IsGrounded() && Mathf.Abs(horizontal) > 0.1f)
         {
             isWallSliding = true;
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x,
-                Mathf.Clamp(rb.linearVelocity.y, -wallSlideSpeed, float.MaxValue));
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Clamp(rb.linearVelocity.y, -wallSlideSpeed, float.MaxValue));
         }
-        else
-            isWallSliding = false;
+        else isWallSliding = false;
     }
 
     private void HandleWallJump()
@@ -181,27 +190,22 @@ public class PlayerMovement : MonoBehaviour
             float direction = isFacingRight ? -1 : 1;
             rb.linearVelocity = new Vector2(direction * wallJumpForce.x, wallJumpForce.y);
 
-            jumpParticles.Stop();
-            jumpParticles.Play();
+            if (jumpParticles != null) { jumpParticles.Stop(); jumpParticles.Play(); }
 
             Invoke(nameof(StopWallJump), wallJumpDuration);
         }
     }
 
-    private void StopWallJump()
-    {
-        isWallJumping = false;
-    }
+    private void StopWallJump() { isWallJumping = false; }
 
     private IEnumerator Dash()
     {
-        if (inNoJumpZone)
-            yield break;
+        if (inNoJumpZone) yield break;
 
         canDash = false;
         isDashing = true;
 
-        playerSprite.sprite = redSprite;
+        if (playerSprite != null && redSprite != null) playerSprite.sprite = redSprite;
 
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
@@ -210,19 +214,15 @@ public class PlayerMovement : MonoBehaviour
         float y = Input.GetAxisRaw("Vertical");
 
         Vector2 dashDir = new Vector2(x, y);
-        if (dashDir == Vector2.zero)
-            dashDir = new Vector2(isFacingRight ? 1 : -1, 0);
+        if (dashDir == Vector2.zero) dashDir = new Vector2(isFacingRight ? 1 : -1, 0);
 
         dashDir.Normalize();
 
         float dashStrength = dashPower;
+        if (dashDir.x != 0 && dashDir.y != 0) dashStrength *= 0.75f;
+        else if (dashDir.y > 0) dashStrength *= 0.60f;
 
-        if (dashDir.x != 0 && dashDir.y != 0)
-            dashStrength *= 0.75f;
-        else if (dashDir.y > 0)
-            dashStrength *= 0.60f;
-
-        tr.emitting = true;
+        if (tr != null) tr.emitting = true;
 
         float t = 0f;
         while (t < dashTime)
@@ -236,15 +236,14 @@ public class PlayerMovement : MonoBehaviour
                 isDashing = false;
                 rb.gravityScale = originalGravity;
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
-                jumpParticles.Stop();
-                jumpParticles.Play();
+                if (jumpParticles != null) { jumpParticles.Stop(); jumpParticles.Play(); }
                 break;
             }
 
             yield return null;
         }
 
-        tr.emitting = false;
+        if (tr != null) tr.emitting = false;
         rb.gravityScale = originalGravity;
         isDashing = false;
 
@@ -252,7 +251,8 @@ public class PlayerMovement : MonoBehaviour
 
         yield return new WaitForSeconds(dashCooldown);
 
-        playerSprite.sprite = greenSprite;
+        if (playerSprite != null && greenSprite != null) playerSprite.sprite = greenSprite;
+
         canDash = true;
     }
 
@@ -263,13 +263,10 @@ public class PlayerMovement : MonoBehaviour
 
         if (sameDir)
         {
-            if (slightAngle)
-                momentum *= 0.9f;
-            else
-                momentum *= 1.1f;
+            if (slightAngle) momentum *= 0.9f;
+            else momentum *= 1.1f;
         }
-        else
-            momentum *= Mathf.Exp(-12f * Time.deltaTime);
+        else momentum *= Mathf.Exp(-12f * Time.deltaTime);
 
         float maxMomentum = IsGrounded() ? groundMaxMomentum : airMaxMomentum;
         momentum = Mathf.Clamp(momentum, 1f, maxMomentum);
@@ -277,18 +274,19 @@ public class PlayerMovement : MonoBehaviour
 
     public bool IsGrounded()
     {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+        if (groundCheckRef == null) return false;
+        return Physics2D.OverlapCircle(groundCheckRef.position, 0.2f, groundLayer);
     }
 
     private bool IsWalled()
     {
+        if (wallCheck == null) return false;
         return Physics2D.OverlapCircle(wallCheck.position, 0.3f, wallLayer);
     }
 
     private void Flip()
     {
-        if (isWallJumping)
-            return;
+        if (isWallJumping) return;
 
         if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
         {
@@ -302,13 +300,12 @@ public class PlayerMovement : MonoBehaviour
     // FREEZE + UNFREEZE
     public void FreezePlayer()
     {
+        // Clear any buffered input immediately to avoid queued jump
+        Input.ResetInputAxes();
+
         movementLocked = true;
 
-        if (dashRoutine != null)
-        {
-            StopCoroutine(dashRoutine);
-            dashRoutine = null;
-        }
+        if (dashRoutine != null) { StopCoroutine(dashRoutine); dashRoutine = null; }
 
         isDashing = false;
         isWallJumping = false;
@@ -317,12 +314,14 @@ public class PlayerMovement : MonoBehaviour
         rb.gravityScale = 0f;
         rb.constraints = RigidbodyConstraints2D.FreezeAll;
 
-        if (tr != null)
-            tr.emitting = false;
+        if (tr != null) tr.emitting = false;
     }
 
     public void UnfreezePlayer()
     {
+        // Clear any buffered input before returning control
+        Input.ResetInputAxes();
+
         movementLocked = false;
 
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;

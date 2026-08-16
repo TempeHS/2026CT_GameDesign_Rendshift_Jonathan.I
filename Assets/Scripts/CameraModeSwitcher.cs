@@ -3,20 +3,20 @@ using System.Collections;
 
 public class CameraModeSwitcher : MonoBehaviour
 {
+    [Header("Assign in Inspector")]
     public Camera playerCam;
     public Camera freeCam;
     public FreeCamController freeCamController;
-    public Canvas gameCanvas;
-    public Timer timer;
     public PlayerMovement playerMovement;
+    public Timer timer;
 
     public bool freeMode = false;
 
     void Start()
     {
-        playerCam.gameObject.SetActive(true);
-        freeCam.gameObject.SetActive(false);
-        freeCamController.enabled = false;
+        if (playerCam != null) playerCam.gameObject.SetActive(true);
+        if (freeCam != null) freeCam.gameObject.SetActive(false);
+        if (freeCamController != null) freeCamController.enabled = false;
     }
 
     void Update()
@@ -34,17 +34,21 @@ public class CameraModeSwitcher : MonoBehaviour
 
     private IEnumerator EnableFreeCam()
     {
-        yield return null; // Wait one frame for PlayerCam to initialize
+        // Clear buffered input immediately so Player won't receive a queued jump
+        Input.ResetInputAxes();
+
+        // Wait one frame to ensure references are stable
+        yield return null;
 
         if (playerCam == null)
         {
-            Debug.LogError("❌ CameraModeSwitcher: PlayerCam is not assigned!");
+            Debug.LogError("CameraModeSwitcher.EnableFreeCam: playerCam not assigned.");
             yield break;
         }
 
-        if (freeCamController == null)
+        if (freeCam == null || freeCamController == null || playerMovement == null || timer == null)
         {
-            Debug.LogError("❌ CameraModeSwitcher: FreeCamController is not assigned!");
+            Debug.LogError("CameraModeSwitcher.EnableFreeCam: Missing references (freeCam/freeCamController/playerMovement/timer).");
             yield break;
         }
 
@@ -63,17 +67,23 @@ public class CameraModeSwitcher : MonoBehaviour
 
     private void DisableFreeCam()
     {
+        // Clear buffered input before unfreezing player
+        Input.ResetInputAxes();
+
+        if (freeCam == null || playerCam == null || freeCamController == null || playerMovement == null || timer == null)
+        {
+            Debug.LogError("CameraModeSwitcher.DisableFreeCam: Missing references.");
+            return;
+        }
+
         freeCam.gameObject.SetActive(false);
         playerCam.gameObject.SetActive(true);
 
         playerMovement.UnfreezePlayer();
         freeCamController.enabled = false;
 
-        Input.ResetInputAxes();
         timer.blockStartInput = false;
-
-        if (timer.hasStarted)
-            timer.ResumeTimer();
+        if (timer.hasStarted) timer.ResumeTimer();
 
         Time.timeScale = 1f;
     }
