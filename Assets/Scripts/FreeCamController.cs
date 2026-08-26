@@ -3,62 +3,48 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class FreeCamController : MonoBehaviour
 {
-    [Header("Movement Settings")]
-    public float moveSpeed = 10f;
+    public float moveSpeed = 20f;
     public float zoomSpeed = 5f;
-    public float minZoom = 2f;
-    public float maxZoom = 20f;
+    public float minZoom = 1f;
+    public float maxZoom = 40f;
 
-    private Camera cam;
+    Camera cam;
 
     void Awake()
     {
         cam = GetComponent<Camera>();
-        if (cam == null)
-        {
-            Debug.LogError("FreeCamController: Camera component missing.");
-            enabled = false;
-            return;
-        }
-
-        cam.orthographic = true;
-        transform.rotation = Quaternion.identity;
+        if (cam == null) enabled = false;
     }
 
-    public void SyncWithMain(Camera mainCam)
+    public void SyncWithMain(Camera mainCam, Vector3 worldPosition)
     {
-        if (mainCam == null)
-        {
-            Debug.LogError("FreeCamController.SyncWithMain: mainCam is NULL. Assign Player Cam in CameraModeSwitcher.");
-            return;
-        }
+        if (mainCam == null) mainCam = Camera.main;
+        if (mainCam == null) return;
 
-        if (cam == null) cam = GetComponent<Camera>();
-        if (cam == null)
-        {
-            Debug.LogError("FreeCamController.SyncWithMain: FreeCam has no Camera component.");
-            return;
-        }
+        float z = transform.position.z;
+        if (Mathf.Approximately(z, 0f)) z = -10f;
+        transform.position = new Vector3(worldPosition.x, worldPosition.y, z);
 
+        cam.orthographic = mainCam.orthographic;
         cam.orthographicSize = mainCam.orthographicSize;
-        Vector3 p = mainCam.transform.position;
-        p.z = transform.position.z;
-        transform.position = p;
+        cam.fieldOfView = mainCam.fieldOfView;
+        cam.cullingMask = mainCam.cullingMask;
+        cam.clearFlags = mainCam.clearFlags;
+        cam.backgroundColor = mainCam.backgroundColor;
+        cam.rect = mainCam.rect;
+        cam.depth = mainCam.depth + 1f;
+        cam.targetTexture = null;
+        cam.useOcclusionCulling = mainCam.useOcclusionCulling;
+
+        if (cam.rect.width <= 0f || cam.rect.height <= 0f) cam.rect = new Rect(0f, 0f, 1f, 1f);
+
+        cam.enabled = true;
     }
 
     void Update()
     {
-        // Prevent jump buffering originating from FreeCam input
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Input.ResetInputAxes();
-            return;
-        }
-
         float mx = 0f;
         float my = 0f;
-
-        // Correct mapping: W/S -> Y axis, A/D -> X axis
         if (Input.GetKey(KeyCode.W)) my += 1f;
         if (Input.GetKey(KeyCode.S)) my -= 1f;
         if (Input.GetKey(KeyCode.A)) mx -= 1f;
@@ -70,15 +56,9 @@ public class FreeCamController : MonoBehaviour
         transform.position += move * moveSpeed * Time.unscaledDeltaTime;
 
         if (Input.GetKey(KeyCode.Q))
-            cam.orthographicSize = Mathf.Max(minZoom, cam.orthographicSize - zoomSpeed * Time.unscaledDeltaTime);
+            cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - zoomSpeed * Time.unscaledDeltaTime, minZoom, maxZoom);
 
         if (Input.GetKey(KeyCode.E))
-            cam.orthographicSize = Mathf.Min(maxZoom, cam.orthographicSize + zoomSpeed * Time.unscaledDeltaTime);
-
-        if (Input.GetKeyDown(KeyCode.R))
-            moveSpeed += 2f;
-
-        if (Input.GetKeyDown(KeyCode.T))
-            moveSpeed = Mathf.Max(2f, moveSpeed - 2f);
+            cam.orthographicSize = Mathf.Clamp(cam.orthographicSize + zoomSpeed * Time.unscaledDeltaTime, minZoom, maxZoom);
     }
 }
