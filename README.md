@@ -30,14 +30,14 @@
 ---
 
 ## 1. Game Overview
-
+Rendshift is brutal precision platformer game where the smallest of misinputs inputs will send you to your death. The goal of the game is to reach the end of the level in the shortest possbile time. The game has x levels each with increasing difficulty adding new objects, requiring new movemnt mechanics like dashing, dash canceling, double jumping and more.
 ### 1.1 Genre
 
 
 ### 1.2 Target Audience
 
 
-### 1.3 Game Summary`
+### 1.3 Game Summary
 
 
 ### 1.4 Win / Loss Conditions
@@ -49,9 +49,9 @@
 ### 1.5 Platform & Build Settings
 | Setting | Detail |
 |---|---|
-| Target Platform | |
-| Resolution | |
-| Build Type | |
+| Target Platform |Windows x64|
+| Resolution |1980x1080|
+| Build Type |Development|
 
 ---
 
@@ -287,11 +287,23 @@
 ### 8.1 Script Summary
 | Script Name | Attached To | Responsibility |
 |---|---|---|
-| | | |
-| | | |
-| | | |
-| | | |
-| | | |
+|ArrowPointer.cs|Arrow| |
+|BestTime.cs|BestTimeText| |
+|CameraFollow.cs|Maincam| |
+|CameraModeSwitcher.cs|CameraManager| |
+|DashTimer.cs| | |
+|DeathExplosion.cs| | |
+|FallingPlatform.cs|FallingBlock| |
+|FinishBlock.cs|End| |
+|FreeCamController.cs|Freecam| |
+|GameManager.cs| | |
+|Kill.cs| | |
+|NoDashZone.cs|NoDashZone| |
+|Restart.cs| | |
+|RunManager.cs| | |
+|Timer.cs|TimerText| |
+|UIMANAGER.cs|UIMANAGER| |
+
 
 ### 8.2 Key Algorithms / Logic
 | Feature | Script | Description |
