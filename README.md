@@ -4,7 +4,7 @@
 |---|---|
 | **Rendshift** | |
 | **Jonathan I** | |
-| ** Computer Technology** | |
+| **Computer Technology** | |
 | **https://github.com/TempeHS/2026CT_GameDesign_Rendshift_Jonathan.I** | |
 | **6.000.0.58f1** | |
 | **v0.1** | |
