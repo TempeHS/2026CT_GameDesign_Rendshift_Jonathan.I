@@ -2,13 +2,14 @@
 
 | Field | Detail |
 |---|---|
-| **Rendshift** | |
-| **Jonathan I** | |
-| **Computer Technology** | |
-| **https://github.com/TempeHS/2026CT_GameDesign_Rendshift_Jonathan.I** | |
-| **6.000.0.58f1** | |
-| **v0.1** | |
-| **27/08/2026** | |
+| **Game Title** |**Rendshift** |
+| **Student Name(s)** |**Jonathan I** |
+| **Class / Course** |**Computer Technology** |
+| **Repository** |**https://github.com/TempeHS/2026CT_GameDesign_Rendshift_Jonathan.I** |
+| **Unity Version** |**6.000.0.58f1** |
+| **Document Version** |**v0.1** |
+| **Date** | **27/08/2026**|
+
 
 ---
 
