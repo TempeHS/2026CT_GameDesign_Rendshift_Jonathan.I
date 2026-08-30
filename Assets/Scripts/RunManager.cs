@@ -4,13 +4,10 @@ public class RunManager : MonoBehaviour
 {
     public static RunManager Instance;
 
-    [Header("Lives")]
-    public int livesPerRun = 3;
-    public int currentLives;
-
     [Header("Respawn")]
     public Transform spawnPoint;
     public GameObject playerPrefab;
+
     private GameObject currentPlayer;
     public Transform CurrentPlayerTransform => currentPlayer != null ? currentPlayer.transform : null;
 
@@ -26,24 +23,12 @@ public class RunManager : MonoBehaviour
 
     public void StartNewRun()
     {
-        currentLives = livesPerRun;
         SpawnPlayer();
     }
 
     public void OnPlayerDeath()
     {
-        currentLives--;
-
-        if (currentLives <= 0)
-        {
-            Debug.Log("Run over — restarting run");
-            StartNewRun();
-        }
-        else
-        {
-            Debug.Log("Player died — respawning");
-            SpawnPlayer();
-        }
+        SpawnPlayer();
     }
 
     private void SpawnPlayer()
