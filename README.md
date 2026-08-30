@@ -32,7 +32,7 @@
 ## 1. Game Overview
 Rendshift is brutal precision platformer game where the smallest of misinputs inputs will send you to your death. The goal of the game is to reach the end of the level in the shortest possbile time. The game has x levels each with increasing difficulty adding new objects, requiring new movemnt mechanics like dashing, dash canceling, double jumping and more.
 ### 1.1 Genre
-
+Precision Platformer / Speedrunning Platformer
 
 ### 1.2 Target Audience
 
@@ -43,8 +43,8 @@ Rendshift is brutal precision platformer game where the smallest of misinputs in
 ### 1.4 Win / Loss Conditions
 | Condition | Description |
 |---|---|
-| Win | |
-| Loss | |
+| Win |Reach the end of the level|
+| Loss |Fall into void or collide with hazard|
 
 ### 1.5 Platform & Build Settings
 | Setting | Detail |
@@ -90,11 +90,13 @@ Rendshift is brutal precision platformer game where the smallest of misinputs in
 ### 3.1 Core Mechanics
 | ID | Mechanic | Description | Implemented In (Script/Object) |
 |---|---|---|---|
-| M-1 | | | |
-| M-2 | | | |
-| M-3 | | | |
-| M-4 | | | |
-| M-5 | | | |
+| M-1 |Movement| |PlayerMovement.cs|
+| M-2 |Double jump| |PlayerMovement.cs|
+| M-3 |Dash| |PlayerMovement.cs, DashTimer.cs|
+| M-4 |Dash canceling| |PlayerMovement.cs|
+| M-5 |8 way dash| |PlayerMovement.cs|
+| M-6 |Dying| |Kill.cs, RunManager.cs|
+
 
 ### 3.2 Player Controls
 | Action | Input (Keyboard / Controller) | Description |
@@ -287,15 +289,15 @@ Rendshift is brutal precision platformer game where the smallest of misinputs in
 ### 8.1 Script Summary
 | Script Name | Attached To | Responsibility |
 |---|---|---|
-|ArrowPointer.cs|Arrow| |
-|BestTime.cs|BestTimeText| |
-|CameraFollow.cs|Maincam| |
+|ArrowPointer.cs|Arrow|Pointing to end|
+|BestTime.cs|BestTimeText|Best Time|
+|CameraFollow.cs|Maincam|Follow Player|
 |CameraModeSwitcher.cs|CameraManager| |
-|DashTimer.cs| | |
-|DeathExplosion.cs| | |
-|FallingPlatform.cs|FallingBlock| |
-|FinishBlock.cs|End| |
-|FreeCamController.cs|Freecam| |
+|DashTimer.cs| |Dash Cooldown|
+|DeathExplosion.cs| |Explosion Animation|
+|FallingPlatform.cs|FallingBlock|Falling Block Object|
+|FinishBlock.cs|End|Level finish|
+|FreeCamController.cs|Freecam|Freecam|
 |GameManager.cs| | |
 |Kill.cs| | |
 |NoDashZone.cs|NoDashZone| |
