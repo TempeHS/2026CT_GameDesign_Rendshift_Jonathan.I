@@ -32,13 +32,13 @@
 ## 1. Game Overview
 Rendshift is brutal precision platformer game where the smallest of misinputs inputs will send you to your death. The goal of the game is to reach the end of the level in the shortest possbile time. The game has x levels each with increasing difficulty adding new objects, requiring new movemnt mechanics like dashing, dash canceling, double jumping and more.
 ### 1.1 Genre
-Precision Platformer / Speedrunning Platformer
+Speedrunning Platformer
 
 ### 1.2 Target Audience
-
+Players who enjoy fast pace platformers, challenging mechanics and speedrunning. People who enjoy this may also like games such as Celeste, Karlson, Super Meat Boy, and other movement focused platformers.
 
 ### 1.3 Game Summary
-
+Rendshift is a platformer built around fast movement, tight jumps and punishing mistakes. Every level has harder obstacles, new hazards and harder mechanics advanced movement mechanics. The goal is to reach the end as fast as possible.
 
 ### 1.4 Win / Loss Conditions
 | Condition | Description |
@@ -101,12 +101,12 @@ Precision Platformer / Speedrunning Platformer
 ### 3.2 Player Controls
 | Action | Input (Keyboard / Controller) | Description |
 |---|---|---|
-|Move|A/D| |
-|Jump|Space| |
-|Double Jump|Space| |
-|Dash|Left Shift| |
-|Dash Camcel|Jump| |
-| | | |
+|Move|A/D|Left and right movement|
+|Jump|Space|Jumping|
+|Double Jump|Space|Jumping mid air|
+|Dash|Left Shift|A quick burst in the chosen direction|
+|Dash Camcel|Jump|Cancelling the dash to control dash length|
+|Freecam|F|Freecam allows player to view the whole map|
 
 ### 3.3 Physics & Collision
 | Feature | Description |
@@ -263,10 +263,19 @@ Precision Platformer / Speedrunning Platformer
 ### 7.1 Scene List
 | Scene Name | Purpose | Description |
 |---|---|---|
-| | | |
-| | | |
-| | | |
-| | | |
+|Test Level|Mechanics/Script/Object testing|A level made to test new objects/scripts/mechanics before implementing into other levels|
+|Level 1| | |
+|Level 2| | |
+|Level 3| | |
+|Level 4| | |
+|Level 5| | |
+|Level 6| | |
+|Level 7| | |
+|Level 8| | |
+|Level 9| | |
+|Level 10| | |
+
+
 
 ### 7.2 Level / Environment Screenshots
 | Level / Area | Description | Screenshot |
