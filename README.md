@@ -101,9 +101,11 @@ Precision Platformer / Speedrunning Platformer
 ### 3.2 Player Controls
 | Action | Input (Keyboard / Controller) | Description |
 |---|---|---|
-| | | |
-| | | |
-| | | |
+|Move|A/D| |
+|Jump|Space| |
+|Double Jump|Space| |
+|Dash|Left Shift| |
+|Dash Camcel|Jump| |
 | | | |
 
 ### 3.3 Physics & Collision
