@@ -118,8 +118,8 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 ### 3.4 Game Loop
 | Stage | Description |
 |---|---|
-| Start / Initialisation | |
-| Core Loop | |
+| Start / Initialisation |Start of the level|
+| Core Loop |Restart level to get faster times|
 | Win / End State | |
 | Restart | |
 
@@ -264,16 +264,16 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 | Scene Name | Purpose | Description |
 |---|---|---|
 |Test Level|Mechanics/Script/Object testing|A level made to test new objects/scripts/mechanics before implementing into other levels|
-|Level 1| | |
-|Level 2| | |
-|Level 3| | |
-|Level 4| | |
-|Level 5| | |
-|Level 6| | |
-|Level 7| | |
-|Level 8| | |
-|Level 9| | |
-|Level 10| | |
+|Level 1|Introduction|First level|
+|Level 2|Introduce jumping|Second level|
+|Level 3|More advanced jumping|Third level|
+|Level 4|Introduce spikes|Fourth level|
+|Level 5|More spikes and jumps|Fifth level|
+|Level 6|Introduce wall climbing|Sixth level|
+|Level 7|Introduce falling platforms and false platforms|Seventh level|
+|Level 8|Combination of mechanics|Eighth level|
+|Level 9|More advanced mechanics and no dash zone|Ninth level|
+|Level 10|Combination of all previous mechanics|Final level|
 
 
 
@@ -303,7 +303,7 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 |ArrowPointer.cs|Arrow|Pointing to end|
 |BestTime.cs|BestTimeText|Best Time|
 |CameraFollow.cs|Maincam|Follow Player|
-|CameraModeSwitcher.cs|CameraManager| |
+|CameraModeSwitcher.cs|CameraManager|Switches from main camera to freecam|
 |DashTimer.cs| |Dash Cooldown|
 |DeathExplosion.cs|DeathGif|Explosion Animation|
 |FallingPlatform.cs|FallingBlock|Falling Block Object|
