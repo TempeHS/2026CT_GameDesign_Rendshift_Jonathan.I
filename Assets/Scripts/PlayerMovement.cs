@@ -35,6 +35,11 @@ public class PlayerMovement : MonoBehaviour
     public TrailRenderer tr;
     public ParticleSystem jumpParticles;
 
+    [Header("Movement VFX")]
+    public GameObject groundJumpVfx; // VFX2
+    public GameObject airJumpVfx;    // VFX3
+    public float landingVfxMinFallSpeed = 4f;
+
     [Header("Dash Sprites")]
     public SpriteRenderer playerSprite;
     public Sprite greenSprite;
@@ -42,17 +47,21 @@ public class PlayerMovement : MonoBehaviour
 
     [HideInInspector] public bool movementLocked = false;
 
-    // internal state
     float horizontal;
-    bool isFacingRight = true;
     float momentum = 1f;
     float holdTime = 0f;
     int lastMoveDir = 0;
     int jumpCount = 0;
+
+    bool isFacingRight = true;
     bool isWallSliding = false;
     bool isWallJumping = false;
     bool isDashing = false;
     bool canDash = true;
+
+    bool wasGrounded = true;
+    bool wasFallingFast = false;
+
     Coroutine dashRoutine = null;
 
     void Reset() => rb = GetComponent<Rigidbody2D>();
@@ -60,7 +69,11 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         if (rb == null) rb = GetComponent<Rigidbody2D>();
-        if (playerSprite != null && greenSprite != null) playerSprite.sprite = greenSprite;
+
+        if (playerSprite != null && greenSprite != null)
+            playerSprite.sprite = greenSprite;
+
+        wasGrounded = IsGrounded();
     }
 
     void Update()
@@ -68,40 +81,80 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Return))
         {
             UnfreezePlayer();
+
             UnityEngine.SceneManagement.SceneManager.LoadScene(
                 UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
             );
+
             return;
         }
 
         if (movementLocked)
         {
             rb.linearVelocity = Vector2.zero;
-            if (Input.GetButtonDown("Jump")) Input.ResetInputAxes();
+
+            if (Input.GetButtonDown("Jump"))
+                Input.ResetInputAxes();
+
             return;
         }
 
         horizontal = Input.GetAxisRaw("Horizontal");
 
+        // Landing VFX detection
+        bool groundedNow = IsGrounded();
+
+        if (!groundedNow &&
+            rb.linearVelocity.y < -landingVfxMinFallSpeed)
+        {
+            wasFallingFast = true;
+        }
+
+        if (groundedNow && !wasGrounded)
+        {
+            if (wasFallingFast)
+                SpawnVfx(groundJumpVfx);
+
+            wasFallingFast = false;
+        }
+
+        wasGrounded = groundedNow;
+
         HandleMomentum();
         HandleWallSlide();
         HandleWallJump();
 
+        // Ground / double jump
         if (!inNoJumpZone &&
+            !isDashing &&
             Input.GetButtonDown("Jump") &&
             !isWallSliding &&
             jumpCount < maxJumps)
         {
+            bool grounded = IsGrounded();
+
             momentum *= 0.9f;
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
-            if (jumpParticles != null) { jumpParticles.Stop(); jumpParticles.Play(); }
+
+            rb.linearVelocity =
+                new Vector2(rb.linearVelocity.x, jumpingPower);
+
+            if (grounded)
+                SpawnVfx(groundJumpVfx); // VFX2
+            else
+                SpawnVfx(airJumpVfx); // VFX3
+
             jumpCount++;
         }
 
-        if (IsGrounded() && rb.linearVelocity.y <= 0.01f) jumpCount = 0;
+        if (IsGrounded() && rb.linearVelocity.y <= 0.01f)
+            jumpCount = 0;
 
-        if (!inNoJumpZone && Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        if (!inNoJumpZone &&
+            Input.GetKeyDown(KeyCode.LeftShift) &&
+            canDash)
+        {
             dashRoutine = StartCoroutine(Dash());
+        }
 
         Flip();
     }
@@ -119,15 +172,26 @@ public class PlayerMovement : MonoBehaviour
         if (!isWallJumping)
         {
             float speed = baseSpeed;
-            if (!IsGrounded()) speed *= 1.04f;
-            rb.linearVelocity = new Vector2(horizontal * speed * momentum, rb.linearVelocity.y);
+
+            if (!IsGrounded())
+                speed *= 1.04f;
+
+            rb.linearVelocity =
+                new Vector2(
+                    horizontal * speed * momentum,
+                    rb.linearVelocity.y
+                );
         }
     }
 
     void HandleMomentum()
     {
-        int moveDir = horizontal > 0 ? 1 : horizontal < 0 ? -1 : 0;
-        float maxMomentum = IsGrounded() ? groundMaxMomentum : airMaxMomentum;
+        int moveDir =
+            horizontal > 0 ? 1 :
+            horizontal < 0 ? -1 : 0;
+
+        float maxMomentum =
+            IsGrounded() ? groundMaxMomentum : airMaxMomentum;
 
         if (lastMoveDir != 0 && moveDir != lastMoveDir)
         {
@@ -146,9 +210,15 @@ public class PlayerMovement : MonoBehaviour
         }
 
         holdTime += Time.deltaTime;
-        float t = holdTime;
-        float curve = Mathf.Pow(1f - Mathf.Exp(-1.25f * t), 0.75f);
-        float target = 1f + (maxMomentum - 1f) * curve;
+
+        float curve =
+            Mathf.Pow(
+                1f - Mathf.Exp(-1.25f * holdTime),
+                0.75f
+            );
+
+        float target =
+            1f + (maxMomentum - 1f) * curve;
 
         momentum = Mathf.Lerp(momentum, target, 0.5f);
         momentum = Mathf.Clamp(momentum, 1f, maxMomentum);
@@ -158,24 +228,55 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleWallSlide()
     {
-        if (IsWalled() && !IsGrounded() && Mathf.Abs(horizontal) > 0.1f)
+        if (IsWalled() &&
+            !IsGrounded() &&
+            Mathf.Abs(horizontal) > 0.1f)
         {
             isWallSliding = true;
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Clamp(rb.linearVelocity.y, -wallSlideSpeed, float.MaxValue));
+
+            rb.linearVelocity = new Vector2(
+                rb.linearVelocity.x,
+                Mathf.Clamp(
+                    rb.linearVelocity.y,
+                    -wallSlideSpeed,
+                    float.MaxValue
+                )
+            );
         }
-        else isWallSliding = false;
+        else
+        {
+            isWallSliding = false;
+        }
     }
 
     void HandleWallJump()
     {
-        if (isWallSliding && Input.GetButtonDown("Jump"))
+        if (isWallSliding &&
+            Input.GetButtonDown("Jump"))
         {
             isWallJumping = true;
+
             momentum *= 0.9f;
-            float direction = isFacingRight ? -1f : 1f;
-            rb.linearVelocity = new Vector2(direction * wallJumpForce.x, wallJumpForce.y);
-            if (jumpParticles != null) { jumpParticles.Stop(); jumpParticles.Play(); }
-            Invoke(nameof(StopWallJump), wallJumpDuration);
+
+            float direction =
+                isFacingRight ? -1f : 1f;
+
+            rb.linearVelocity =
+                new Vector2(
+                    direction * wallJumpForce.x,
+                    wallJumpForce.y
+                );
+
+            if (jumpParticles != null)
+            {
+                jumpParticles.Stop();
+                jumpParticles.Play();
+            }
+
+            Invoke(
+                nameof(StopWallJump),
+                wallJumpDuration
+            );
         }
     }
 
@@ -183,12 +284,14 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator Dash()
     {
-        if (inNoJumpZone) yield break;
+        if (inNoJumpZone)
+            yield break;
 
         canDash = false;
         isDashing = true;
 
-        if (playerSprite != null && redSprite != null) playerSprite.sprite = redSprite;
+        if (playerSprite != null && redSprite != null)
+            playerSprite.sprite = redSprite;
 
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
@@ -197,35 +300,67 @@ public class PlayerMovement : MonoBehaviour
         float y = Input.GetAxisRaw("Vertical");
 
         Vector2 dashDir = new Vector2(x, y);
-        if (dashDir == Vector2.zero) dashDir = new Vector2(isFacingRight ? 1f : -1f, 0f);
+
+        if (dashDir == Vector2.zero)
+        {
+            dashDir =
+                new Vector2(
+                    isFacingRight ? 1f : -1f,
+                    0f
+                );
+        }
+
         dashDir.Normalize();
 
         float dashStrength = dashPower;
-        if (dashDir.x != 0 && dashDir.y != 0) dashStrength *= 0.75f;
-        else if (dashDir.y > 0) dashStrength *= 0.60f;
 
-        if (tr != null) tr.emitting = true;
+        if (dashDir.x != 0 && dashDir.y != 0)
+            dashStrength *= 0.75f;
+        else if (dashDir.y > 0)
+            dashStrength *= 0.60f;
+
+        if (tr != null)
+            tr.emitting = true;
 
         float t = 0f;
+
         while (t < dashTime)
         {
             t += Time.deltaTime;
-            float ease = Mathf.Lerp(1.35f, 0.65f, t / dashTime);
-            rb.linearVelocity = dashDir * dashStrength * ease;
 
+            float ease =
+                Mathf.Lerp(
+                    1.35f,
+                    0.65f,
+                    t / dashTime
+                );
+
+            rb.linearVelocity =
+                dashDir * dashStrength * ease;
+
+            // Dash cancel
             if (Input.GetButtonDown("Jump"))
             {
                 isDashing = false;
                 rb.gravityScale = originalGravity;
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
-                if (jumpParticles != null) { jumpParticles.Stop(); jumpParticles.Play(); }
+
+                rb.linearVelocity =
+                    new Vector2(
+                        rb.linearVelocity.x,
+                        jumpingPower
+                    );
+
+                SpawnVfx(airJumpVfx); // VFX3
+
                 break;
             }
 
             yield return null;
         }
 
-        if (tr != null) tr.emitting = false;
+        if (tr != null)
+            tr.emitting = false;
+
         rb.gravityScale = originalGravity;
         isDashing = false;
 
@@ -233,45 +368,100 @@ public class PlayerMovement : MonoBehaviour
 
         yield return new WaitForSeconds(dashCooldown);
 
-        if (playerSprite != null && greenSprite != null) playerSprite.sprite = greenSprite;
+        if (playerSprite != null && greenSprite != null)
+            playerSprite.sprite = greenSprite;
 
         canDash = true;
     }
 
     void ApplyDashMomentum(Vector2 dashDir)
     {
-        bool sameDir = (isFacingRight && dashDir.x > 0) || (!isFacingRight && dashDir.x < 0);
-        bool slightAngle = sameDir && Mathf.Abs(dashDir.y) > 0;
+        bool sameDir =
+            (isFacingRight && dashDir.x > 0) ||
+            (!isFacingRight && dashDir.x < 0);
+
+        bool slightAngle =
+            sameDir &&
+            Mathf.Abs(dashDir.y) > 0;
 
         if (sameDir)
         {
-            if (slightAngle) momentum *= 0.9f;
-            else momentum *= 1.1f;
+            if (slightAngle)
+                momentum *= 0.9f;
+            else
+                momentum *= 1.1f;
         }
-        else momentum *= Mathf.Exp(-12f * Time.deltaTime);
+        else
+        {
+            momentum *= Mathf.Exp(
+                -12f * Time.deltaTime
+            );
+        }
 
-        float maxMomentum = IsGrounded() ? groundMaxMomentum : airMaxMomentum;
-        momentum = Mathf.Clamp(momentum, 1f, maxMomentum);
+        float maxMomentum =
+            IsGrounded()
+                ? groundMaxMomentum
+                : airMaxMomentum;
+
+        momentum =
+            Mathf.Clamp(
+                momentum,
+                1f,
+                maxMomentum
+            );
+    }
+
+    void SpawnVfx(GameObject vfx)
+    {
+        if (vfx == null)
+            return;
+
+        Vector3 spawnPosition =
+            groundCheck != null
+                ? groundCheck.position
+                : transform.position;
+
+        Instantiate(
+            vfx,
+            spawnPosition,
+            Quaternion.identity
+        );
     }
 
     public bool IsGrounded()
     {
-        if (groundCheck == null) return false;
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+        if (groundCheck == null)
+            return false;
+
+        return Physics2D.OverlapCircle(
+            groundCheck.position,
+            0.2f,
+            groundLayer
+        );
     }
 
     bool IsWalled()
     {
-        if (wallCheck == null) return false;
-        return Physics2D.OverlapCircle(wallCheck.position, 0.3f, wallLayer);
+        if (wallCheck == null)
+            return false;
+
+        return Physics2D.OverlapCircle(
+            wallCheck.position,
+            0.3f,
+            wallLayer
+        );
     }
 
     void Flip()
     {
-        if (isWallJumping) return;
-        if ((isFacingRight && horizontal < 0f) || (!isFacingRight && horizontal > 0f))
+        if (isWallJumping)
+            return;
+
+        if ((isFacingRight && horizontal < 0f) ||
+            (!isFacingRight && horizontal > 0f))
         {
             isFacingRight = !isFacingRight;
+
             Vector3 scale = transform.localScale;
             scale.x *= -1f;
             transform.localScale = scale;
@@ -283,7 +473,11 @@ public class PlayerMovement : MonoBehaviour
         Input.ResetInputAxes();
         movementLocked = true;
 
-        if (dashRoutine != null) { StopCoroutine(dashRoutine); dashRoutine = null; }
+        if (dashRoutine != null)
+        {
+            StopCoroutine(dashRoutine);
+            dashRoutine = null;
+        }
 
         isDashing = false;
         isWallJumping = false;
@@ -292,15 +486,22 @@ public class PlayerMovement : MonoBehaviour
         rb.gravityScale = 0f;
         rb.constraints = RigidbodyConstraints2D.FreezeAll;
 
-        if (tr != null) tr.emitting = false;
-        if (playerSprite != null && greenSprite != null) playerSprite.sprite = greenSprite;
+        if (tr != null)
+            tr.emitting = false;
+
+        if (playerSprite != null && greenSprite != null)
+            playerSprite.sprite = greenSprite;
     }
 
     public void UnfreezePlayer()
     {
         Input.ResetInputAxes();
+
         movementLocked = false;
-        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+        rb.constraints =
+            RigidbodyConstraints2D.FreezeRotation;
+
         rb.gravityScale = 3f;
     }
 }

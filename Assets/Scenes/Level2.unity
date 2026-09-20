@@ -2277,6 +2277,7 @@ GameObject:
   - component: {fileID: 1317258385}
   - component: {fileID: 1317258384}
   - component: {fileID: 1317258383}
+  - component: {fileID: 1317258387}
   m_Layer: 0
   m_Name: DeathGif
   m_TagString: Untagged
@@ -2388,6 +2389,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1317258387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1317258382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93e2658a269a9c44489e9c8fc0673b99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1332456210 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 112925035872480459, guid: 7214fdb70817ded40971116c21be192e, type: 3}

@@ -5156,6 +5156,8 @@ MonoBehaviour:
     m_Bits: 64
   tr: {fileID: 4953927854784199413}
   jumpParticles: {fileID: 7703480683960876256}
+  groundJumpVfx: {fileID: 531367471106149052, guid: 3b5408c8c336d2948aa3518d2dd060cf, type: 3}
+  airJumpVfx: {fileID: 8721021770982668379, guid: 5c39d5f56ddbf7f418160308ddfd5f6a, type: 3}
   playerSprite: {fileID: 1621260056667301698}
   greenSprite: {fileID: 5268476828356764303, guid: f538ba074767d1546b42671fc441a767, type: 3}
   redSprite: {fileID: -5328496133515097166, guid: 867a9fd89f1506b4886c7b59dc55e6ac, type: 3}
