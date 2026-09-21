@@ -38,7 +38,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement VFX")]
     public GameObject groundJumpVfx; // VFX2
     public GameObject airJumpVfx;    // VFX3
-    public float landingVfxMinFallSpeed = 4f;
+    public float landingVfxMinFallSpeed = 6f;
 
     [Header("Dash Sprites")]
     public SpriteRenderer playerSprite;
