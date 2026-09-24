@@ -7,7 +7,7 @@
 | **Class / Course** |**Computer Technology** |
 | **Repository** |**https://github.com/TempeHS/2026CT_GameDesign_Rendshift_Jonathan.I** |
 | **Unity Version** |**6.000.0.58f1** |
-| **Document Version** |**v0.1** |
+| **Document Version** |**v1** |
 | **Date** | **27/08/2026**|
 
 
@@ -30,7 +30,7 @@
 ---
 
 ## 1. Game Overview
-Rendshift is brutal precision platformer game where the smallest of misinputs inputs will send you to your death. The goal of the game is to reach the end of the level in the shortest possbile time. The game has x levels each with increasing difficulty adding new objects, requiring new movemnt mechanics like dashing, dash canceling, double jumping and more.
+Rendshift is brutal precision platformer game where the smallest of misinputs inputs will send you to your death. The goal of the game is to reach the end of the level in the shortest possbile time. The game has 10 levels each with increasing difficulty adding new objects, requiring new movemnt mechanics like dashing, dash canceling, double jumping and more.
 ### 1.1 Genre
 Speedrunning Platformer
 
@@ -70,18 +70,17 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 
 | Field | Detail |
 |---|---|
-| **Video Title** | |
-| **Link / Embed** | |
-| **Duration** | |
-| **Description** | |
+| **Video Title** |Computer Technology Assesment|
+| **Link / Embed** |https://youtu.be/ow668bT88Tg|
+| **Duration** |0:46|
+| **Description** |N/A|
 
 ### 2.2 Feature Highlight Clips
 
 | Clip | Description | Link |
 |---|---|---|
-| | | |
-| | | |
-| | | |
+| N/A |No separate feature clips used|N/A|
+
 
 ---
 
@@ -90,12 +89,12 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 ### 3.1 Core Mechanics
 | ID | Mechanic | Description | Implemented In (Script/Object) |
 |---|---|---|---|
-| M-1 |Movement| |PlayerMovement.cs|
-| M-2 |Double jump| |PlayerMovement.cs|
-| M-3 |Dash| |PlayerMovement.cs, DashTimer.cs|
-| M-4 |Dash canceling| |PlayerMovement.cs|
-| M-5 |8 way dash| |PlayerMovement.cs|
-| M-6 |Dying| |Kill.cs, RunManager.cs|
+| M-1 |Movement|Left and right movement|PlayerMovement.cs|
+| M-2 |Double jump|Jump again while mid air|PlayerMovement.cs|
+| M-3 |Dash|Quick movement in a chosen direction|PlayerMovement.cs, DashTimer.cs|
+| M-4 |Dash canceling|Cancel a dash by jumping|PlayerMovement.cs|
+| M-5 |8 way dash|Dash in 8 different directions|PlayerMovement.cs|
+| M-6 |Dying|Player dies when touching hazards|Kill.cs, RunManager.cs|
 
 
 ### 3.2 Player Controls
@@ -111,17 +110,18 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 ### 3.3 Physics & Collision
 | Feature | Description |
 |---|---|
-| | |
-| | |
-| | |
+|Ground Detection|Uses a Physics2D overlap check below the player to determine whether the player is grounded.|
+|Wall Detection|Uses a Physics2D overlap check beside the player to detect object tagged wall.|
+|Trigger Collisions|Finish blocks, hazards and no dash zones use trigger colliders to detect the player.|
+
 
 ### 3.4 Game Loop
 | Stage | Description |
 |---|---|
 | Start / Initialisation |Start of the level|
 | Core Loop |Restart level to get faster times|
-| Win / End State | |
-| Restart | |
+| Win / End State |Reach the finish and get your final time|
+| Restart |Reload the level and try again|
 
 ### 3.5 Scoring & Progression
 | Element | Description |
@@ -138,10 +138,10 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 
 | Effect Name | Purpose | Screenshot |
 |---|---|---|
-| | | |
-| | | |
-| | | |
-| | | |
+| Jump VFX |Plays when jumping|![alt text](image-5.png)|
+| Air Jump VFX |Plays when double jumping or wall jumping|![alt text](image-6.png)|
+| Landing VFX |Plays after a bigger fall|![alt text](image-5.png)|
+| Dash Trail |Shows when the player is dashing|![alt text](image-7.png)|
 
 > Add screenshot images using: `![Effect Name](./docs/screenshots/effect_name.png)`
 
@@ -151,9 +151,8 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 
 | Cut Scene | Trigger | Description | Screenshot / Still |
 |---|---|---|---|
-| | | | |
-| | | | |
-| | | | |
+| N/A |N/A|No cut scenes used|N/A|
+
 
 > Add screenshot images using: `![Cut Scene Name](./docs/screenshots/cutscene_name.png)`
 
@@ -163,9 +162,9 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 
 | Animation | Object / Character | Description | Screenshot |
 |---|---|---|---|
-| | | | |
-| | | | |
-| | | | |
+| Death Explosion |Player|Explosion when the player dies|![alt text](image-15.png)|
+| Jump VFX |Player|Smoke effect when jumping|![alt text](image-16.png)|
+| Air Jump VFX |Player|Smoke effect when double jumping or wall jumping|![alt text](image-17.png)|
 
 > Add screenshot images using: `![Animation Name](./docs/screenshots/animation_name.png)`
 
@@ -175,9 +174,7 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 
 | Feature | Description | Screenshot |
 |---|---|---|
-| | | |
-| | | |
-| | | |
+| N/A |No lighting or post-processing used|N/A|
 
 > Add screenshot images using: `![Feature Name](./docs/screenshots/lighting_name.png)`
 
@@ -187,9 +184,9 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 
 | Shader / Material | Applied To | Description | Screenshot |
 |---|---|---|---|
-| | | | |
-| | | | |
-| | | | |
+| Default Sprite Material |Sprites|Used for normal 2D sprites|![alt text](image-13.png)|
+| Default UI Material |UI|Used for buttons and menus|![alt text](image-11.png)|
+| TextMeshPro Material |Text|Used for game text|![alt text](image-12.png)|
 
 > Add screenshot images using: `![Shader Name](./docs/screenshots/shader_name.png)`
 
@@ -204,9 +201,7 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 
 | Description | Screenshot |
 |---|---|
-| | |
-| | |
-| | |
+| N/A |N/A|
 
 ---
 
@@ -215,23 +210,19 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 ### 5.1 Music
 | Track | Scene / Trigger | Source / Composer |
 |---|---|---|
-| | | |
-| | | |
+| N/A |No music used|N/A|
 
 ### 5.2 Sound Effects
 | Sound Effect | Trigger | Source |
 |---|---|---|
-| | | |
-| | | |
-| | | |
-| | | |
+| N/A |No sound effects used|N/A|
 
 ### 5.3 Audio Implementation
 | Feature | Description |
 |---|---|
-| Audio Mixer / Groups | |
-| Spatial / 3D Audio | |
-| Dynamic Audio | |
+| Audio Mixer / Groups |N/A|
+| Spatial / 3D Audio |N/A|
+| Dynamic Audio |N/A|
 
 ---
 
@@ -240,19 +231,19 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 ### 6.1 HUD Elements
 | Element | Purpose | Screenshot |
 |---|---|---|
-| | | |
-| | | |
-| | | |
+| Timer |Shows current time|![alt text](image-1.png)|
+| Best Time |Shows fastest time|![alt text](image.png)|
+| Arrow |Points towards the finish|![alt text](image-2.png)|
 
 > Add screenshot images using: `![HUD Element](./docs/screenshots/hud_name.png)`
 
 ### 6.2 Menus
 | Menu | Purpose | Screenshot |
 |---|---|---|
-| Main Menu | | |
-| Pause Menu | | |
-| Game Over Screen | | |
-| | | |
+| Main Menu |Level select acts as the main menu|![alt text](image-3.png)|
+| Pause Menu |N/A|N/A|
+| Game Over Screen |Shows when the player dies|![alt text](image-4.png)|
+
 
 > Add screenshot images using: `![Menu Name](./docs/screenshots/menu_name.png)`
 
@@ -280,57 +271,63 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 ### 7.2 Level / Environment Screenshots
 | Level / Area | Description | Screenshot |
 |---|---|---|
-| | | |
-| | | |
-| | | |
+| Level 1 |Starting level|![alt text](image-8.png)|
+| Level 6 |Wall jumping level|![alt text](image-9.png)|
+| Level 10 |Final level using previous mechanics|![alt text](image-10.png)|
 
 > Add screenshot images using: `![Level Name](./docs/screenshots/level_name.png)`
 
 ### 7.3 Scene Management
 | Feature | Description |
 |---|---|
-| Scene Loading Method | |
-| Persistent Data Between Scenes | |
-| Scene Transition Effects | |
+| Scene Loading Method |SceneManager loads and restarts levels|
+| Persistent Data Between Scenes |Saves best times and unlocked levels|
+| Scene Transition Effects |Direct scene loading|
 
 ---
 
 ## 8. Scripts & Programming
 
 ### 8.1 Script Summary
+
 | Script Name | Attached To | Responsibility |
 |---|---|---|
-|ArrowPointer.cs|Arrow|Pointing to end|
-|BestTime.cs|BestTimeText|Best Time|
-|CameraFollow.cs|Maincam|Follow Player|
-|CameraModeSwitcher.cs|CameraManager|Switches from main camera to freecam|
-|DashTimer.cs| |Dash Cooldown|
-|DeathExplosion.cs|DeathGif|Explosion Animation|
-|FallingPlatform.cs|FallingBlock|Falling Block Object|
-|FinishBlock.cs|End|Level finish|
-|FreeCamController.cs|Freecam|Freecam|
-|GameManager.cs|GameManager| |
-|Kill.cs| | |
-|NoDashZone.cs|NoDashZone|No dashing allowed|
-|Restart.cs| | |
-|RunManager.cs| | |
-|Timer.cs|TimerText| |
-|UIMANAGER.cs|UIMANAGER| |
+|ArrowPointer.cs|Arrow|Points towards the finish|
+|BestTime.cs|BestTimeText|Stores and shows best time|
+|CameraFollow.cs|Maincam|Follows player|
+|CameraModeSwitcher.cs|CameraManager|Switches between player camera and freecam|
+|DashTimer.cs|N/A|Currently unused|
+|DeathExplosion.cs|DeathGif|Death explosion animation|
+|DeathHint.cs|DeathHint|Shows a hint after dying|
+|DeathHintState.cs|N/A|Keeps the hint after restarting the same level|
+|DestroyAfterAnimation.cs|VFX|Destroys VFX after the animation finishes|
+|FallingPlatform.cs|FallingBlock|Makes platforms fall|
+|FinishBlock.cs|End|Finishes the level and unlocks the next level|
+|FreeCamController.cs|Freecam|Controls freecam movement and zoom|
+|GameManager.cs|GameManager|Spawns player|
+|Kill.cs|KillBlock|Handles player death|
+|LevelSelect.cs|LevelSelect|Controls level selection and locked levels|
+|NoDashZone.cs|NoDashZone|Stops dashing in certain areas|
+|PlayerMovement.cs|Player|Controls player movement, jumping and dashing|
+|Restart.cs|Death UI|Restarts the level|
+|RunManager.cs|RunManager|Handles player spawning|
+|Timer.cs|TimerText|Controls the timer|
+|UIMANAGER.cs|UIMANAGER|Controls menus and level loading|
 
 
 ### 8.2 Key Algorithms / Logic
 | Feature | Script | Description |
 |---|---|---|
-| | | |
-| | | |
-| | | |
+| Momentum |PlayerMovement.cs|Builds speed while moving in the same direction|
+| Dash Direction |PlayerMovement.cs|Allows dashing in different directions|
+| Level Unlocking |FinishBlock.cs / LevelSelect.cs|Unlocks the next level after finishing|
 
 ### 8.3 Design Patterns Used
 | Pattern | Where Applied | Justification |
 |---|---|---|
-| | | |
-| | | |
-| | | |
+| Singleton |RunManager.cs|Allows other scripts to access RunManager|
+| Components |Game objects|Different scripts control different features|
+| State System |CameraModeSwitcher.cs|Tracks if freecam is on or off|
 
 ---
 
@@ -340,14 +337,13 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 
 | # | Title | Author / Creator | URL / Source | What You Used It For | What You Changed / Adapted |
 |---|---|---|---|---|---|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
-| 6 | | | | | |
-| 7 | | | | | |
-| 8 | | | | | |
+| 1 | How To Dash In Unity | YouTube tutorial | https://www.youtube.com/watch?v=2kFGmuPHiA0 | Making the dash mechanic | Changed the dash speed and directions |
+| 2 | How To Make 2D Falling Platforms In Unity | YouTube tutorial | https://www.youtube.com/watch?v=uzbMPEkkSmo | Making falling platforms | Changed timing to fit my levels |
+| 3 | 2D Player Movement In Unity | YouTube tutorial | https://www.youtube.com/watch?v=K1xZ-rycYY8 | Basic player movement | Added momentum and changed movement values |
+| 4 | How To Double Jump In Unity | YouTube tutorial | https://www.youtube.com/watch?v=RdhgngSUco0&t=5s | Making double jumping | Changed jump values and added VFX |
+| 5 | How To Wall Slide & Wall Jump In Unity | YouTube tutorial | https://www.youtube.com/watch?v=O6VX6Ro7EtA | Making wall sliding and wall jumping | Changed wall jump force and added wall jump VFX |
+| 6 | Unity help | OpenAI ChatGPT | ChatGPT | Debugging and improving scripts | Changed and adapted suggestions to fit game |
+
 
 ---
 
@@ -358,35 +354,33 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 ### 10.1 Visual Assets
 | Asset Name | Type | Creator / Source | Licence | URL | Used For |
 |---|---|---|---|---|---|
-| | | | | | |
-| | | | | | |
-| | | | | | |
+| Smoke and Dust VFX |Animation|Frostwindz|Free asset|https://frostwindz.itch.io/pixel-art-vfx-smoke-dust-free-version|Jump effects|
+| Death Explosion |Animation|unkown|unkown|unkown|Death animation|
+| Player Sprites |Sprites|Own sprite|Owned|N/A|Player|
 
 ### 10.2 Audio Assets
 | Asset Name | Type | Creator / Source | Licence | URL | Used For |
 |---|---|---|---|---|---|
-| | | | | | |
-| | | | | | |
-| | | | | | |
+| N/A |No audio assets used|N/A|N/A|N/A|N/A|
+
 
 ### 10.3 Scripts & Code Snippets
 | Script / Snippet | Source | Licence | URL | Used For | Changes Made |
 |---|---|---|---|---|---|
-| | | | | | |
-| | | | | | |
+| Basic player movement |2D Player Movement In Unity|N/A|https://www.youtube.com/watch?v=K1xZ-rycYY8|Horizontal movement|Changed movement values and added momentum|
+
 
 ### 10.4 Unity Packages & Plugins
 | Package Name | Version | Source | Licence | URL | Purpose |
 |---|---|---|---|---|---|
-| | | | | | |
-| | | | | | |
-| | | | | | |
+| Universal Render Pipeline |17.0.4|Unity|Unity Licence|Unity Package Manager|Rendering|
+| Input System |1.14.2|Unity|Unity Licence|Unity Package Manager|Input|
+| 2D Feature Set |2.0.1|Unity|Unity Licence|Unity Package Manager|2D tools|
 
 ### 10.5 Fonts
 | Font Name | Creator / Source | Licence | URL |
 |---|---|---|---|
-| | | | |
-| | | | |
+| Liberation Sans |TextMesh Pro|SIL Open Font Licence|Included with Unity|
 
 ---
 
@@ -394,11 +388,11 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 
 | # | Challenge Encountered | How It Was Solved |
 |---|---|---|
-| 1 | | |
-| 2 | | |
-| 3 | | |
-| 4 | | |
-| 5 | | |
+| 1 |Movement did not feel fast enough|Added a momentum system|
+| 2 |Diagonal dashes were too strong|Lowered the power of diagonal dashes|
+| 3 |Freecam caused problems with movement and timer|Paused the player and timer while using freecam|
+| 4 |VFX stayed in the scene|Made them destroy after the animation finishes|
+| 5 |Level progress needed to save|Used PlayerPrefs|
 
 ---
 
@@ -414,8 +408,8 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 |---|---|
 | **Branch Name** | `main` |
 | **Purpose** | Stable, releasable version of the game |
-| **Merged From** | |
-| **Final Commit** | |
+| **Merged From** | `Level-Transition`, `Freecam` |
+| **Final Commit** | `d53c54d` |
 
 ---
 
@@ -423,156 +417,62 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 
 | Field | Detail |
 |---|---|
-| **Branch Name** | |
-| **Feature Developed** | |
-| **Merged Into** | |
-| **Date Started** | |
-| **Date Merged** | |
+| **Branch Name** | `Level-Transition` |
+| **Feature Developed** | Level transitions |
+| **Merged Into** | `main` |
+| **Date Started** | 17/06/2026 |
+| **Date Merged** | 17/06/2026 |
 
 #### What Was Built
-<!-- Describe what this branch added or changed -->
+Added level transitions allowing the player to move between levels after finishing.
 
 #### Key Commits
 | Commit Message | What Changed |
 |---|---|
-| | |
-| | |
-| | |
+| WIP : Level transitions |Worked on level transitions|
+| Completed Level Transitions |Finished level transitions|
+
 
 #### Problems Encountered & Resolved
 | Problem | Resolution |
 |---|---|
-| | |
-| | |
+| Levels did not transition properly |Fixed the level loading system|
 
 #### Screenshot / Evidence
 <!-- Add a screenshot of the feature working -->
 > `![Feature Name](./docs/screenshots/branch_feature_name.png)`
-
+![alt text](image-14.png)
 ---
 
 ### Branch 3 — `feature/`
 
 | Field | Detail |
 |---|---|
-| **Branch Name** | |
-| **Feature Developed** | |
-| **Merged Into** | |
-| **Date Started** | |
-| **Date Merged** | |
+| **Branch Name** | `Freecam` |
+| **Feature Developed** | Freecam |
+| **Merged Into** | `main` |
+| **Date Started** | 05/08/2026 |
+| **Date Merged** | 26/08/2026 |
 
 #### What Was Built
-
+Added a freecam allowing the player to move around and view the whole level.
 
 #### Key Commits
 | Commit Message | What Changed |
 |---|---|
-| | |
-| | |
-| | |
+| WIP : Moving camera |Started camera movement|
+| WIP : Freecam |Worked on freecam|
+| Freecam |Fixed freecam problems|
 
 #### Problems Encountered & Resolved
 | Problem | Resolution |
 |---|---|
-| | |
-| | |
+| Freecam caused problems with normal gameplay |Fixed camera switching and pausing|
+
 
 #### Screenshot / Evidence
 > `![Feature Name](./docs/screenshots/branch_feature_name.png)`
-
----
-
-### Branch 4 — `feature/`
-
-| Field | Detail |
-|---|---|
-| **Branch Name** | |
-| **Feature Developed** | |
-| **Merged Into** | |
-| **Date Started** | |
-| **Date Merged** | |
-
-#### What Was Built
-
-
-#### Key Commits
-| Commit Message | What Changed |
-|---|---|
-| | |
-| | |
-| | |
-
-#### Problems Encountered & Resolved
-| Problem | Resolution |
-|---|---|
-| | |
-| | |
-
-#### Screenshot / Evidence
-> `![Feature Name](./docs/screenshots/branch_feature_name.png)`
-
----
-
-### Branch 5 — `feature/`
-
-| Field | Detail |
-|---|---|
-| **Branch Name** | |
-| **Feature Developed** | |
-| **Merged Into** | |
-| **Date Started** | |
-| **Date Merged** | |
-
-#### What Was Built
-
-
-#### Key Commits
-| Commit Message | What Changed |
-|---|---|
-| | |
-| | |
-| | |
-
-#### Problems Encountered & Resolved
-| Problem | Resolution |
-|---|---|
-| | |
-| | |
-
-#### Screenshot / Evidence
-> `![Feature Name](./docs/screenshots/branch_feature_name.png)`
-
----
-
-### Branch 6 — `feature/`
-
-| Field | Detail |
-|---|---|
-| **Branch Name** | |
-| **Feature Developed** | |
-| **Merged Into** | |
-| **Date Started** | |
-| **Date Merged** | |
-
-#### What Was Built
-
-
-#### Key Commits
-| Commit Message | What Changed |
-|---|---|
-| | |
-| | |
-| | |
-
-#### Problems Encountered & Resolved
-| Problem | Resolution |
-|---|---|
-| | |
-| | |
-
-#### Screenshot / Evidence
-> `![Feature Name](./docs/screenshots/branch_feature_name.png)`
-
+![alt text](image-18.png)
 ---
 
 ### Branch Development Overview
@@ -581,12 +481,9 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 
 | Branch Name | Feature | Date Started | Date Merged | Status |
 |---|---|---|---|---|
-| `main` | Stable release | | | |
-| `feature/` | | | | |
-| `feature/` | | | | |
-| `feature/` | | | | |
-| `feature/` | | | | |
-| `feature/` | | | | |
+| `main` | Stable release |13/05/2026|N/A|Active|
+| `Level-Transition` |Level transitions|17/06/2026|17/06/2026|Completed|
+| `Freecam` |Freecam|05/08/2026|26/08/2026|Completed|
 
 ---
 
