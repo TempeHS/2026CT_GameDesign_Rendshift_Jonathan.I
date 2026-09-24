@@ -30,7 +30,7 @@
 ---
 
 ## 1. Game Overview
-Rendshift is brutal precision platformer game where the smallest of misinputs inputs will send you to your death. The goal of the game is to reach the end of the level in the shortest possbile time. The game has 10 levels each with increasing difficulty adding new objects, requiring new movemnt mechanics like dashing, dash canceling, double jumping and more.
+Rendshift is a precision platformer game where the smallest of misinputs will send you to your death. The goal of the game is to reach the end of the level in the shortest possible time. The game has 10 levels each with increasing difficulty adding new objects, requiring new movement mechanics like dashing, dash canceling, double jumping and more.
 ### 1.1 Genre
 Speedrunning Platformer
 
@@ -50,7 +50,7 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 | Setting | Detail |
 |---|---|
 | Target Platform |Windows x64|
-| Resolution |1980x1080|
+| Resolution |1920x1080|
 | Build Type |Development|
 
 ---
@@ -70,7 +70,7 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 
 | Field | Detail |
 |---|---|
-| **Video Title** |Computer Technology Assesment|
+| **Video Title** |Computer Technology Assessment|
 | **Link / Embed** |https://youtu.be/ow668bT88Tg|
 | **Duration** |0:46|
 | **Description** |N/A|
@@ -104,7 +104,7 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 |Jump|Space|Jumping|
 |Double Jump|Space|Jumping mid air|
 |Dash|Left Shift|A quick burst in the chosen direction|
-|Dash Camcel|Jump|Cancelling the dash to control dash length|
+|Dash Cancel|Jump|Cancelling the dash to control dash length|
 |Freecam|F|Freecam allows player to view the whole map|
 
 ### 3.3 Physics & Collision
@@ -355,7 +355,6 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 | Asset Name | Type | Creator / Source | Licence | URL | Used For |
 |---|---|---|---|---|---|
 | Smoke and Dust VFX |Animation|Frostwindz|Free asset|https://frostwindz.itch.io/pixel-art-vfx-smoke-dust-free-version|Jump effects|
-| Death Explosion |Animation|unkown|unkown|unkown|Death animation|
 | Player Sprites |Sprites|Own sprite|Owned|N/A|Player|
 
 ### 10.2 Audio Assets
@@ -413,7 +412,7 @@ Rendshift is a platformer built around fast movement, tight jumps and punishing 
 
 ---
 
-### Branch 2 — `feature/`
+### Branch 2 — `Level-Transition`
 
 | Field | Detail |
 |---|---|
@@ -444,7 +443,7 @@ Added level transitions allowing the player to move between levels after finishi
 ![alt text](image-14.png)
 ---
 
-### Branch 3 — `feature/`
+### Branch 3 — `Freecam/`
 
 | Field | Detail |
 |---|---|
