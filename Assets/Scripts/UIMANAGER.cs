@@ -28,7 +28,7 @@ public class UIManager : MonoBehaviour
                 RestartGame();
             }
 
-            // SPACE = Next level (only if next level button is active)
+            // SPACE = Next level
             if (Input.GetKeyDown(KeyCode.Space) && nextLevelButton.activeSelf)
             {
                 NextLevel();
@@ -41,7 +41,8 @@ public class UIManager : MonoBehaviour
     {
         panel.SetActive(true);
 
-        popupText.text = "Level Complete!\nTime: " + finalTime.ToString("F2");
+        popupText.text =
+            "Level Complete!\nTime: " + finalTime.ToString("F2");
 
         restartButton.SetActive(true);
         nextLevelButton.SetActive(allowNext);
@@ -58,14 +59,26 @@ public class UIManager : MonoBehaviour
         nextLevelButton.SetActive(false);
     }
 
+    // RESTART CURRENT LEVEL
     public void RestartGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(
+            SceneManager.GetActiveScene().buildIndex
+        );
     }
 
+    // NEXT LEVEL
     public void NextLevel()
     {
-        int currentIndex = SceneManager.GetActiveScene().buildIndex;
+        int currentIndex =
+            SceneManager.GetActiveScene().buildIndex;
+
         SceneManager.LoadScene(currentIndex + 1);
+    }
+
+    // OPEN LEVEL SELECT MENU
+    public void OpenLevelMenu()
+    {
+        SceneManager.LoadScene("LevelMenu");
     }
 }

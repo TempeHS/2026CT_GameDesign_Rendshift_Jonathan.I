@@ -33,12 +33,11 @@ public class PlayerMovement : MonoBehaviour
     public Transform groundCheck;
     public LayerMask groundLayer;
     public TrailRenderer tr;
-    public ParticleSystem jumpParticles;
 
     [Header("Movement VFX")]
     public GameObject groundJumpVfx; // VFX2
     public GameObject airJumpVfx;    // VFX3
-    public float landingVfxMinFallSpeed = 6f;
+    public float landingVfxMinFallSpeed = 4f;
 
     [Header("Dash Sprites")]
     public SpriteRenderer playerSprite;
@@ -50,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
     float horizontal;
     float momentum = 1f;
     float holdTime = 0f;
+
     int lastMoveDir = 0;
     int jumpCount = 0;
 
@@ -68,7 +68,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        if (rb == null) rb = GetComponent<Rigidbody2D>();
+        if (rb == null)
+            rb = GetComponent<Rigidbody2D>();
 
         if (playerSprite != null && greenSprite != null)
             playerSprite.sprite = greenSprite;
@@ -101,30 +102,12 @@ public class PlayerMovement : MonoBehaviour
 
         horizontal = Input.GetAxisRaw("Horizontal");
 
-        // Landing VFX detection
-        bool groundedNow = IsGrounded();
-
-        if (!groundedNow &&
-            rb.linearVelocity.y < -landingVfxMinFallSpeed)
-        {
-            wasFallingFast = true;
-        }
-
-        if (groundedNow && !wasGrounded)
-        {
-            if (wasFallingFast)
-                SpawnVfx(groundJumpVfx);
-
-            wasFallingFast = false;
-        }
-
-        wasGrounded = groundedNow;
-
+        HandleLandingVfx();
         HandleMomentum();
         HandleWallSlide();
         HandleWallJump();
 
-        // Ground / double jump
+        // Ground jump / double jump
         if (!inNoJumpZone &&
             !isDashing &&
             Input.GetButtonDown("Jump") &&
@@ -134,7 +117,6 @@ public class PlayerMovement : MonoBehaviour
             bool grounded = IsGrounded();
 
             momentum *= 0.9f;
-
             rb.linearVelocity =
                 new Vector2(rb.linearVelocity.x, jumpingPower);
 
@@ -167,7 +149,8 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (isDashing) return;
+        if (isDashing)
+            return;
 
         if (!isWallJumping)
         {
@@ -182,6 +165,29 @@ public class PlayerMovement : MonoBehaviour
                     rb.linearVelocity.y
                 );
         }
+    }
+
+    void HandleLandingVfx()
+    {
+        bool groundedNow = IsGrounded();
+
+        // Remember if the player reached a fast enough falling speed
+        if (!groundedNow &&
+            rb.linearVelocity.y < -landingVfxMinFallSpeed)
+        {
+            wasFallingFast = true;
+        }
+
+        // Just landed
+        if (groundedNow && !wasGrounded)
+        {
+            if (wasFallingFast)
+                SpawnVfx(groundJumpVfx); // VFX2 landing dust
+
+            wasFallingFast = false;
+        }
+
+        wasGrounded = groundedNow;
     }
 
     void HandleMomentum()
@@ -255,7 +261,6 @@ public class PlayerMovement : MonoBehaviour
             Input.GetButtonDown("Jump"))
         {
             isWallJumping = true;
-
             momentum *= 0.9f;
 
             float direction =
@@ -267,11 +272,8 @@ public class PlayerMovement : MonoBehaviour
                     wallJumpForce.y
                 );
 
-            if (jumpParticles != null)
-            {
-                jumpParticles.Stop();
-                jumpParticles.Play();
-            }
+            // VFX3 for wall kick
+            SpawnVfx(airJumpVfx);
 
             Invoke(
                 nameof(StopWallJump),
@@ -381,8 +383,7 @@ public class PlayerMovement : MonoBehaviour
             (!isFacingRight && dashDir.x < 0);
 
         bool slightAngle =
-            sameDir &&
-            Mathf.Abs(dashDir.y) > 0;
+            sameDir && Mathf.Abs(dashDir.y) > 0;
 
         if (sameDir)
         {
@@ -393,9 +394,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            momentum *= Mathf.Exp(
-                -12f * Time.deltaTime
-            );
+            momentum *= Mathf.Exp(-12f * Time.deltaTime);
         }
 
         float maxMomentum =
@@ -498,10 +497,7 @@ public class PlayerMovement : MonoBehaviour
         Input.ResetInputAxes();
 
         movementLocked = false;
-
-        rb.constraints =
-            RigidbodyConstraints2D.FreezeRotation;
-
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         rb.gravityScale = 3f;
     }
 }
